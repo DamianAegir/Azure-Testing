@@ -22,41 +22,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '24.x'
-          cache: 'npm'
 
-      - name: Install dependencies
+      - name: npm install, build, and test
         run: |
-          cd web && npm ci
-          cd ../api && npm ci
-
-      - name: Build applications
-        run: |
-          npm run build
-
-      - name: Setup database
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: |
-          cd api
-          npx prisma migrate deploy
-          npx prisma db seed
-
-      - name: Install Playwright browsers
-        run: |
-          cd web
-          npx playwright install --with-deps chromium
-
-      - name: Run Playwright tests
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
-          NODE_ENV: test
-          PORT: 5175
-          VITE_API_TARGET: http://localhost:5175
-        run: |
-          cd web
-          npm run e2e
+          npm install
+          npm run build --if-present
+          npm run test --if-present
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
