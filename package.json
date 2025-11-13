@@ -5,10 +5,17 @@
   "main": "api/src/index.ts",
   "scripts": {
     "test": "echo \"No tests specified\"",
-    "build": "cd web && npm run build && cd ../api && npx prisma generate && npm run build",
+    "build": "cd web && npm run build && cd ../api && npm run build",
+    "postinstall": "cd api && npx prisma generate",
     "start": "cd api && node dist/index.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.10.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.10.0"
+  }
 }
