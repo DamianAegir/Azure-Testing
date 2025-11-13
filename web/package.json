@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode development",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && npx vite build",
     "lint": "eslint .",
     "preview": "vite preview --port 5173",
     "e2e": "dotenv -e .env.test -- playwright test",
