@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
 import bcrypt from "bcrypt";
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 const prisma = new PrismaClient();
 
+// API Routes
 app.get("/api/health", async (_, res) => {
   await prisma.$queryRaw`SELECT 1`;
   res.json({ ok: true, ts: new Date().toISOString() });
@@ -321,6 +323,15 @@ app.get("/api/users", authMiddleware, async (req, res) => {
       hasPreviousPage: page > 1
     }
   });
+});
+
+// Serve static files from the React build (after all API routes)
+const frontendDistPath = path.join(__dirname, '../../web/dist');
+app.use(express.static(frontendDistPath));
+
+// Handle React routing - return index.html for all non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendDistPath, 'index.html'));
 });
 
 const PORT = Number(process.env.PORT || 5175);
