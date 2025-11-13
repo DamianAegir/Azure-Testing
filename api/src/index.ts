@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
-import path from "path";
 import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
 import bcrypt from "bcrypt";
+import path from "path";
 import { 
   generateAccessToken, 
   generateRefreshToken, 
@@ -14,9 +14,15 @@ import {
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 const prisma = new PrismaClient();
 
-// API Routes
+// Only serve static files in production (not during development/testing)
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from the public directory (React build)
+  app.use(express.static(path.join(__dirname, '../public')));
+}
+
 app.get("/api/health", async (_, res) => {
   await prisma.$queryRaw`SELECT 1`;
   res.json({ ok: true, ts: new Date().toISOString() });
@@ -325,19 +331,17 @@ app.get("/api/users", authMiddleware, async (req, res) => {
   });
 });
 
-// Serve static files from the React build (after all API routes)
-const frontendDistPath = path.join(__dirname, '../../web/dist');
-app.use(express.static(frontendDistPath));
-
-// Handle React routing - return index.html for all non-API routes
-app.use((req, res, next) => {
-  // Only handle GET requests that don't start with /api
-  if (req.method === 'GET' && !req.path.startsWith('/api')) {
-    res.sendFile(path.join(frontendDistPath, 'index.html'));
-  } else {
-    next();
-  }
-});
+// Catch-all handler: serve React app for all non-API routes (production only)
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    // Serve React app for all other routes
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  });
+}
 
 const PORT = Number(process.env.PORT || 5175);
 app.listen(PORT, () => console.log(`API on :${PORT}`));
