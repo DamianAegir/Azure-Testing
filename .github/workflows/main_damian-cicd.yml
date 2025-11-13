@@ -39,8 +39,10 @@ jobs:
           postgresql-version: '15'
 
       - name: Create test database
+        env:
+          PGPASSWORD: postgres
         run: |
-          psql -U postgres -c "CREATE DATABASE testdb;"
+          psql -h localhost -U postgres -c "CREATE DATABASE testdb;" || true
 
       - name: Setup database
         env:
