@@ -1,11 +1,12 @@
 {
   "name": "ci-cd-demo",
   "version": "1.0.0",
+  "description": "",
   "main": "api/src/index.ts",
   "scripts": {
     "test": "echo \"No tests specified\"",
-    "build": "cd web && npm install && npm run build && cd ../api && npm install && npm run build",
-    "start": "cd api && node dist/index.js"
+    "build": "cd web && npm install && npm run build && cd ../api && npm install && npx prisma generate && npm run build",
+    "start": "cd api && npx prisma generate && node dist/index.js"
   },
   "keywords": [],
   "author": "",
