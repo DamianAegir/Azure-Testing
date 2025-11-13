@@ -3,6 +3,7 @@ import cors from "cors";
 import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
 import bcrypt from "bcrypt";
+import path from "path";
 import { 
   generateAccessToken, 
   generateRefreshToken, 
@@ -323,5 +324,13 @@ app.get("/api/users", authMiddleware, async (req, res) => {
   });
 });
 
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, "..", "public")));
+
+// Catch-all route to serve index.html for any non-API routes (for React Router)
+app.get(/^(?!\/api).+/, (_, res) => {    res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+  });
+
 const PORT = Number(process.env.PORT || 5175);
 app.listen(PORT, () => console.log(`API on :${PORT}`));
+
