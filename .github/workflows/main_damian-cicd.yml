@@ -33,20 +33,9 @@ jobs:
         run: |
           npm run build
 
-      - name: Set up PostgreSQL
-        uses: ankane/setup-postgres@v1
-        with:
-          postgresql-version: '15'
-
-      - name: Create test database
-        env:
-          PGPASSWORD: postgres
-        run: |
-          psql -h localhost -U postgres -c "CREATE DATABASE testdb;" || true
-
       - name: Setup database
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           cd api
           npx prisma migrate deploy
@@ -59,9 +48,9 @@ jobs:
 
       - name: Run Playwright tests
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
-          JWT_SECRET: test-secret-key-for-ci
-          JWT_REFRESH_SECRET: test-refresh-secret-key-for-ci
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
           NODE_ENV: test
           PORT: 5175
           VITE_API_TARGET: http://localhost:5175
