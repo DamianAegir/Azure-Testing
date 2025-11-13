@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"No tests specified\"",
     "build": "cd web && npm install && npm run build && cd ../api && npm install && npx prisma generate && npm run build",
-    "start": "cd api && npx prisma generate && node dist/index.js"
+    "start": "cd api && node dist/index.js"
   },
   "keywords": [],
   "author": "",

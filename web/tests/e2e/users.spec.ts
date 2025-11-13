@@ -5,7 +5,13 @@ test.describe('User Management', () => {
     // Login before each test
     await page.goto('/login');
     await page.fill('input[name="email"]', 'admin@example.com');
-    await page.locator('button[type="submit"]').click();
+    
+    // Wait for navigation after clicking submit
+    await Promise.all([
+      page.waitForURL('/', { timeout: 10000 }),
+      page.locator('button[type="submit"]').click()
+    ]);
+    
     await expect(page).toHaveURL('/');
     
     // Navigate to users page
@@ -16,8 +22,4 @@ test.describe('User Management', () => {
   test('should display users page', async ({ page }) => {
     await expect(page.locator('h2')).toContainText('Users');
   });
-
-
-
-
 });

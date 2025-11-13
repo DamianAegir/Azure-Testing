@@ -5,7 +5,13 @@ test.describe('Task Management', () => {
     // Login before each test
     await page.goto('/login');
     await page.fill('input[name="email"]', 'admin@example.com');
-    await page.getByRole('button', { name: 'Sign In' }).click();
+    
+    // Wait for navigation after clicking submit
+    await Promise.all([
+      page.waitForURL('/', { timeout: 10000 }),
+      page.getByRole('button', { name: 'Sign In' }).click()
+    ]);
+    
     await expect(page).toHaveURL('/');
   });
 

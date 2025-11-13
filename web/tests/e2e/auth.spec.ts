@@ -11,7 +11,13 @@ test.describe('Authentication Flow', () => {
   test('should successfully login with admin@example.com', async ({ page }) => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'admin@example.com');
-    await page.locator('button[type="submit"]').click();
+    
+    // Wait for navigation after clicking submit
+    await Promise.all([
+      page.waitForURL('/', { timeout: 10000 }),
+      page.locator('button[type="submit"]').click()
+    ]);
+    
     await expect(page).toHaveURL('/');
   });
 });

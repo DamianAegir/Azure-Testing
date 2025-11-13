@@ -330,8 +330,13 @@ const frontendDistPath = path.join(__dirname, '../../web/dist');
 app.use(express.static(frontendDistPath));
 
 // Handle React routing - return index.html for all non-API routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(frontendDistPath, 'index.html'));
+app.use((req, res, next) => {
+  // Only handle GET requests that don't start with /api
+  if (req.method === 'GET' && !req.path.startsWith('/api')) {
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  } else {
+    next();
+  }
 });
 
 const PORT = Number(process.env.PORT || 5175);
