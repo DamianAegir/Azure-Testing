@@ -22,10 +22,50 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '24.x'
+          cache: 'npm'
 
-      - name: npm install, build, and test
+      - name: Install dependencies
+        run: |
+          cd web && npm ci
+          cd ../api && npm ci
+
+      - name: Build applications
         run: |
           npm run build
+
+      - name: Set up PostgreSQL
+        uses: ankane/setup-postgres@v1
+        with:
+          postgresql-version: '15'
+
+      - name: Create test database
+        run: |
+          psql -U postgres -c "CREATE DATABASE testdb;"
+
+      - name: Setup database
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
+        run: |
+          cd api
+          npx prisma migrate deploy
+          npx prisma db seed
+
+      - name: Install Playwright browsers
+        run: |
+          cd web
+          npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
+          JWT_SECRET: test-secret-key-for-ci
+          JWT_REFRESH_SECRET: test-refresh-secret-key-for-ci
+          NODE_ENV: test
+          PORT: 5175
+          VITE_API_TARGET: http://localhost:5175
+        run: |
+          cd web
+          npm run e2e
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
