@@ -14,7 +14,7 @@ env:
   API_DIR: "api"
   WEB_DIR: "web"
   ARTIFACT_NAME: "deployment.zip"
-  DATABASE_URL: postgresql://neondb_owner:npg_2CqTl6stXgUn@ep-odd-night-a43vwkr8-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
   CLIENT_ID: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6B9417B83C15499B8E02D716AC46606D }}
   TENANT_ID: ${{ secrets.AZUREAPPSERVICE_TENANTID_7C60732106C448099E181FC41E9A9DA0 }}
   SUBSCRIPTION_ID: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_83029C21B7E2403BBA9336C551F5A3FA }}
