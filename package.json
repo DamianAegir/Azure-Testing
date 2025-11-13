@@ -1,13 +1,13 @@
 {
   "name": "ci-cd-demo",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "api/src/index.ts",
   "scripts": {
-    "test": "echo \"No tests specified\""
+    "test": "echo \"No tests specified\"",
+    "build": "cd web && npm install && npm run build && cd ../api && npm install && npm run build",
+    "start": "cd api && node dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC"
 }
-
